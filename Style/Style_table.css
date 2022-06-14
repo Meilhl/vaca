@@ -1,0 +1,69 @@
+/*style pour tableau recap */
+
+.tableau_recap table thead tr {
+    background-color: #311400;
+    color:white;
+    font-family: Verdana;
+    font-size: .85em;
+    }
+
+.tableau_recap table tbody tr.odd{
+    background-color: #8f743d82;
+    text-align:center;
+    font-family: Verdana;
+    font-size: .85em;
+    }
+
+.tableau_recap table tbody tr.even{
+    background-color: #8f743d3d;
+    text-align:center;
+    font-family: Verdana;
+    font-size: .85em;
+    }
+
+.tableau_recap table tbody tr:hover{
+    background-color: #d1cbbe;
+    }
+
+#tableau_animal tbody td {
+    padding: 20px;
+
+}
+
+#tableau_mat tbody td {
+    padding: 20px;
+
+}
+
+#tableau_petit_mat tbody td {
+    padding: 20px;
+
+}
+
+.dataTables_wrapper .dataTables_filter input{
+    border:1.5px solid #909090;
+    background-color:#d1d1d1;
+    margin : 0 20px 10px 5px;
+}
+
+.info {
+    display: none;
+    position: absolute;
+    background:#5da55a;
+    color:#ffffff;
+    text-align: left;
+    z-index:5;
+    margin:0;
+    padding:10px;
+    border:solid 2px #000000;
+    border-radius: 10px;
+    list-style: none;
+}
+
+.dropdown:hover{
+    background-color:#bbb39f;
+}
+
+.dropdown:hover .info {
+  display: block;
+}
