@@ -1,67 +1,61 @@
 <?php
-function req_decompose($str_req){
-    //Décompose une requête en ces éléments constitutifs//
-    $sep = " ()";
-    $tok = strtok($str_req, $sep);
-    $req_expl=[];
-    while ($tok !== false) {
-        array_push($req_expl, $tok); 
-        $tok = strtok($sep);       
-        }
-    return $req_expl;
-}
+    require("../../Fonction/transform_requete.php");
+    $db_vaca=mysqli_connect('localhost','root','','vaca');
+    mysqli_set_charset($db_vaca,"utf8mb4_general_ci");
 
-function transform_req( string  $requete){ 
-    /*Fonction qui transforme une requête SQL pour la BDD VACA 
-    en une requête pour la BDD GENIS */
+    $db_genis=mysqli_connect('localhost','root','','genis');
+    mysqli_set_charset($db_genis,"utf8mb4_general_ci");
 
-    //Les tableaux des tables dans GENIS et VACA
-    $array_tables_vaca=array('animal','espece','race','exploitation');
-    $array_tables_genis=array('animal','espece','race','elevage');
+    $id_race_vaca = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+    $id_race_genis = array(19,5,6,3,4,2,7,8,9,10,11,12,13,14,15,16,31,17,18,24);
 
-    //Les tableaux des champs dans GENIS et VACA
-    $fields_genis = array('code_race','','sexe','id_mere','id_pere','nom_animal','no_identification','date_naissance','','','');
-    $fields_vaca = explode(',','id_race,id_famille,id_sexe,id_mere,id_pere,surnom,identifiant_animal,annee_naissance,statut_reformation,statut_convention,en_attente');
-
-    //Tableaux des identification races et sexe
-    
-    // Paragraphe pour séparer les éléments syntaxique de la requète 
-    $req_expl=req_decompose($requete);
-    $insert=explode(',',$req_expl[0]);
-    $name_table=explode(',',$req_expl[1]);
-    $champs=explode(',',$req_expl[2]);
-    $into=explode(',',$req_expl[3]);
-    $valeurs=explode(',',$req_expl[4]);
-    //On commence la construction de la requête
-    $req_genis = $req_expl[0];
-
-    //Construction d'un tableau de correspondance en les noms de table
-    $arrmatch_tables = match_tab_builder($array_tables_vaca,$array_tables_genis);
-
-    // Finalement on récupère le nom de la table genis 
-    $tab_name_genis = $arrmatch_tables[$req_expl[1]];
-
-
-    //Même démarche pour les champs
-    $del_fields =[];
-    $arrmatch_fields = match_tab_builder($fields_vaca,$fields_genis);
-    $req_genis = $req_genis . " " . $tab_name_genis . " (" . $arrmatch_fields[$champs[0]];
-    for ($i=1; $i<count($arrmatch_fields); $i++){
-        if ($arrmatch_fields[$champs[$i]]!=''){
-            $req_genis = $req_genis . "," . $arrmatch_fields[$champs[$i]];
-        }
-        else{
-            $del_fields = array_push($del_fields, $i);
-        }    
-    }
-    $del_fields = arsort($del_fields)
-    $req_genis = $req_genis . $arrmatch_fields[$champs[count($arrmatch_fields)-1]] . ") " . $req_expl[3];
-
+    $tabsex_vaca=['F','M','H'];
+    $tabsex_genis=[1,2,3];
+    // Construction des tableaux de correspondance
     $arrmacth_id_race = match_tab_builder($id_race_vaca,$id_race_genis);
     $arrmatch_sexe = match_tab_builder($tabsex_vaca, $tabsex_genis);
-    $valeurs[0] = $arrmacth_id_race[$valeurs[0]];
-    $valeurs[2] = $arrmatch_sexe[$valeurs[2]];
-    $req_genis = $req_genis . " (". implode(',',$valeurs) . ")";
-    return $req_genis;
-}
-?>
+    
+    $review_animal = "SELECT * FROM animal";
+    
+    $rev_result_vaca = mysqli_query($db_vaca, $review_animal) or die ('pb : ' . mysqli_error($db_vaca)) ;
+    $table_animal_vaca = mysqli_fetch_all($rev_result_vaca) ;
+    $ncol_vaca = mysqli_num_fields($rev_result_vaca) ;
+    $nlig_vaca = mysqli_num_rows($rev_result_vaca) ;
+    
+    $review_genis_animal = "SELECT nom_animal,sexe,no_identification,YEAR(date_naiss),code_race,id_pere,id_mere FROM animal";
+
+    $rev_result_genis = mysqli_query($db_genis, $review_genis_animal) or die ('pb : ' . mysqli_error($db_genis)) ;
+    $table_animal_genis = mysqli_fetch_all($rev_result_genis) ;
+    $ncol_genis = mysqli_num_fields($rev_result_genis) ;
+    $nlig_genis = mysqli_num_rows($rev_result_genis) ; 
+
+    $i=0;
+    $nom_animal=$table_animal_genis[$i][0];
+    $sexe_genis=$table_animal_genis[$i][1];
+    $no_identification=$table_animal_genis[$i][2];
+    $annee_naiss=$table_animal_genis[$i][3];
+    $code_race=$table_animal_genis[$i][4];
+    $id_pere=$table_animal_genis[$i][5];
+    $id_mere=$table_animal_genis[$i][6];
+
+    $queryfamille="SELECT id_famille FROM animal WHERE id_animal= '".$id_mere."'";
+    $resultfamille=mysqli_query($db_vaca,$queryfamille) or die("Impossible d'ouvrir la BDD race:".mysqli_error($db_vaca));
+    $tabfamille=mysqli_fetch_all($resultfamille); // Création d'un tableau php
+    if ($tabfamille==null){
+        $id_famille='NULL';
+    }
+    else{
+        $id_famille="'".$tabfamille[0][0]."'";
+    }
+    if (! $code_race==null){
+        $id_race = array_keys($arrmacth_id_race,$code_race)[0];
+    }
+    else{
+        $id_race=NULL;
+    }
+    $sexe_vaca = array_keys($arrmatch_sexe,$sexe_genis)[0];
+    print_r($table_animal_genis);
+    $ajout_vaca = "INSERT INTO animal (id_mere,id_famille,id_sexe,id_race,id_pere,identifiant_animal,surnom,annee_naissance) 
+    VALUES ($id_mere,$id_famille,$sexe_vaca,$id_race,$id_pere,$no_identification,$nom_animal,$annee_naiss)";
+    echo $ajout_vaca;
+?>   

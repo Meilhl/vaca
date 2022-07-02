@@ -77,7 +77,6 @@ session_start();
     <center><div class="border" style='width:35%;padding:20px;height:auto'>
 
       <?php
-
       /* Connexion à la base de données*/
       $link=mysqli_connect('localhost','root','','vaca');
       mysqli_set_charset($link,"utf8mb4_general_ci");
@@ -174,6 +173,26 @@ session_start();
             echo "<br><input type='text' placeholder='Commencer à écrire...' onkeyup='affichePeres(this.value,$id_race)' size='20' >";
             echo "<span id='txtPeres'></span>";
           }
+          $id_mere="NULL";
+          $id_famille="NULL";
+          if (isset($_GET["id_mere"]))
+            {
+              $id_mere='"'.$_GET["id_mere"].'"';
+              $queryfamille="SELECT id_famille FROM animal WHERE id_animal=$id_mere";
+
+              $resultfamille=mysqli_query($link,$queryfamille) or die("Impossible d'ouvrir la BDD race:".mysqli_error($link));
+              $tabfamille=mysqli_fetch_all($resultfamille); // Création d'un tableau php
+              $id_famille="'".$tabfamille[0][0]."'";
+            }
+            $id_pere="NULL";
+            if(isset($_GET["id_pere"]))
+            {
+              $id_pere="'".$_GET["id_pere"]."'";
+            }
+          
+          $convention=0;
+          $attente=1;
+          $reforme=0;
 
           echo "<br><br>";
           echo "<input type='hidden' name='espece' value=$id_espece>";
@@ -182,51 +201,43 @@ session_start();
           echo "<input type='hidden' name='surnom' value=$surnom>";
           echo "<input type='hidden' name='identifiant' value=$identifiant>";
           echo "<input type='hidden' name='annee_naissance' value=$annee_naissance>";
+          echo "<input type='hidden' name='convention' value=$convention>";
+          echo "<input type='hidden' name='attente' value=$attente>";
+          echo "<input type='hidden' name='reforme' value=$reforme>";
+          echo "<input type='hidden' name='famille' value=$id_famille>";
           echo "<center><input type='submit' name='validation' value= 'Enregistrer ce nouvel animal'></center>";
           echo "</form>";
+        }
+      }  
+    ?>
+        <?php
+          if(isset($_GET['id_mere']) AND isset($_GET['id_pere']) AND isset($_GET['famille']) AND isset($_GET['convention']) AND isset($_GET['attente'])){
+            $id_race=$_GET['race'];
+            $id_famille=$_GET['famille'];
+            $id_sexe=$_GET['sexe'];
+            $id_mere=$_GET['id_mere'];
+            $id_pere=$_GET['id_pere'];
+            $surnom=$_GET['surnom'];
+            $identifiant=$_GET['identifiant'];
+            $annee_naissance=$_GET['annee_naissance'];
+            $reforme=$_GET['reforme'];
+            $convention=$_GET['convention'];
+            $attente=$_GET['attente'];
+            $id_eleveur = $_SESSION['id_profil'];
 
-          $id_espece=$_GET["espece"];
-          $id_race=$_GET["race"];
-          $id_sexe=$_GET["sexe"];
-          $id_mere="NULL";
-          $id_pere="NULL";
-          $id_famille="NULL";
-          if (isset($_GET["id_mere"]))
-          {
-            $id_mere='"'.$_GET["id_mere"].'"';
-            $queryfamille="SELECT id_famille FROM animal WHERE id_animal=$id_mere";
+            $query_get_exploit="SELECT id_exploit FROM attributiondesexploitations WHERE id_profil='".$id_eleveur."'";
+            $result_get_exploitation=mysqli_query($link,$query_get_exploit) or die("Impossible d'ouvrir la BDD race:".mysqli_error($link));
+            $exploitation=mysqli_fetch_all($result_get_exploitation)[0][0];
 
-            $resultfamille=mysqli_query($link,$queryfamille) or die("Impossible d'ouvrir la BDD race:".mysqli_error($link));
-            $tabfamille=mysqli_fetch_all($resultfamille); // Création d'un tableau php
-            $id_famille="'".$tabfamille[0][0]."'";
-          }
-
-          if(isset($_GET["id_pere"]))
-          {
-            $id_pere="'".$_GET["id_pere"]."'";
-          }
-
-          $surnom=$_GET["surnom"];
-          $identifiant=$_GET["identifiant"];
-          $annee_naissance=$_GET["annee_naissance"];
-          $convention=0;
-          $attente=1;
-          $reforme=0;
-
-
-
-          $ajout=" INSERT animal (id_race,id_famille,id_sexe,id_mere,id_pere,surnom,
-            identifiant_animal,annee_naissance,statut_reformation,statut_convention,en_attente)
-            VALUES ('$id_race',$id_famille,'$id_sexe',$id_mere,$id_pere,'$surnom',
-              '$identifiant','$annee_naissance','$reforme','$convention','$attente')";
-
-              if(mysqli_query($link,$ajout)){
-                echo "L'animal a bien été ajouté";
-              }
+            $ajout=" INSERT INTO animal (id_race,id_famille,id_sexe,id_mere,id_pere,surnom,identifiant_animal,annee_naissance,statut_reformation,statut_convention,en_attente,id_exploit,prop_conserv)
+            VALUES ('$id_race',$id_famille,'$id_sexe',$id_mere,$id_pere,'$surnom','$identifiant','$annee_naissance','$reforme','$convention','$attente',$exploitation,FALSE)";
+                if(mysqli_query($link,$ajout)){
+                  echo "L'animal a bien été ajouté";
+                  //Fermer la connexion
+                  mysqli_close($link);
+                }
             }
-          }
-          //Fermer la connexion
-          mysqli_close($link);
+          
           ?>
 
         </div></center>

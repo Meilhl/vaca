@@ -221,16 +221,24 @@ session_start();
           <!-- Durée convention pour trier dans la BDD -->
 
           <h2 style='font-size:1em;width:auto;padding:5px;background:none;color:black;text-align:left'>Durée de la convention :</h2><br>
-          <center>
-          <input type="radio" name="duree" class="radio" value=2>
+          <label for='radio1'> <p><b>1 an</b></p> </label>
+          <input type="radio" name="duree" class="radio" id='radio1' value="2" required>
+
+          <label for='radio2'> <p><b>2 an</b></p> </label>
+          <input type="radio" name="duree" class="radio" id='radio2' value="3" required>
+
+          <label for='radio3'> <p><b>Autre</b></p> </label>
+          <input type="radio" name="duree" class="radio" id='radio3' value="4" required>
+          
+         <!--  <input type="radio" name="duree" class="radio" value=2>
           <label>1 an</label>
 
           <input type="radio" name="duree" class="radio" value=3>
           <label>2 ans</label>
 
           <input type="radio" name="duree" class="radio" value=4>
-          <label>Autre durée</label>
-        </center>
+          <label>Autre durée</label> -->
+        
           <!--choix date de fin si duree autre-->
 
 
@@ -294,17 +302,17 @@ session_start();
               $tab5 = mysqli_fetch_all($result5);
               $id_demande = $tab5[0][0];
 
-              //recuperation du tableau fait a partir des données issues des checkbox
+              //Récupération du tableau fait a partir des données issues des checkbox
               $id_test=$_POST['selected'];
 
-              //Récupérartion des id des animaux sélectionnés
+              //Récupération des id des animaux sélectionnés
               $query5 = "SELECT LAST_INSERT_ID() FROM demande"; //On recupere l'identifiant de la demande pour l'associer a chaque animal.
               $result5 =mysqli_query($link,$query5);
               $tab5 = mysqli_fetch_all($result5);
               $id_demande = $tab5[0][0];
 
 
-              //recuperation du tableau fait a partir des données issues des checkbox
+              //Récupération du tableau fait a partir des données issues des checkbox
               $id_test=$_POST['selected'];
 
               if(isset($id_test)){

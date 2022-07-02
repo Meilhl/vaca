@@ -250,7 +250,6 @@
             $date_naiss = "$annee_naissance" . "-01-01";
 
             $ajout=" INSERT animal (id_race,id_famille,id_sexe,id_mere,id_pere,surnom,identifiant_animal,annee_naissance,statut_reformation,statut_convention,en_attente) VALUES ('$id_race',$id_famille,'$id_sexe',$id_mere,$id_pere,'$surnom','$identifiant','$annee_naissance','$reforme','$convention','$attente')";
-            $ajout_genis= "INSERT INTO animal (code_race,sexe,id_mere,id_pere,nom_animal,no_identification,date_naiss,reproducteur,valide_animal,conservatoire,fecondation,coeff_consang) VALUES ('$code_race',$sexe_genis,$id_mere,$id_pere,'$surnom','$identifiant','$date_naiss',0,0,0,0,0)";
             
             if(mysqli_query($link_genis,$ajout_genis)){
                 echo " L'animal a bien été ajouté à Genis";

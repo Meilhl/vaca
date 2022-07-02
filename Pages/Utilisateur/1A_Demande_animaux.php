@@ -191,12 +191,10 @@
 
             }
             //verifié se la demande etait ajouté a BDD avec sucess
-            //si la demande est de bovin, ajouté a table attribuition des animaux et verification avec msg
+            //si la demande est de bovin, ajouté a table attribution des animaux et verification avec msg
             $result_dem= mysqli_query($link, $query_dem);
             if ($result_dem){
-              echo "<div class='box'>
-              <h3>Demande fait avec sucess.</h3><br>
-              </div>";
+              
               if ($race_choix>=1 && $race_choix<=5){
                 $taureau=$_POST['taureau'];
                 $query_id= "SELECT LAST_INSERT_ID() FROM demande";
@@ -209,7 +207,7 @@
                 $resul_attri= mysqli_query($link, $query_attri);
                 if($resul_attri){
                   echo "<div class='box'>
-                  <h3>Atribuiton avec succes</h3>
+                  <h3>Attribution de l'animal effectué avec succès</h3>
                   </div>";
                 }
 

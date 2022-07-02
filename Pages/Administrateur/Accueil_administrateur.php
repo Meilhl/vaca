@@ -372,13 +372,13 @@ if(isset($_GET['modif'])){header('Location:3A2_Modif_animal?id='.$_GET['animal']
             mysqli_select_db($link,'vaca')
               or die("Impossible d'ouvrir la BDD vaca:".mysqli_error($link));
 
-            if (isset($_GET["valid"]))
+            /* if (isset($_GET["valid"]))
             {
                 $id=$_GET["animal"];
                 $valid= "UPDATE animal SET en_attente='0'
                 WHERE id_animal=$id";
                 $push=mysqli_query($link,$valid);
-            }
+            } */
 
             /* Récupération des identifiant des observateurs ainsi que leurs nom */
             $query1="SELECT id_animal, id_race, identifiant_animal, surnom, id_sexe, annee_naissance
@@ -416,11 +416,12 @@ if(isset($_GET['modif'])){header('Location:3A2_Modif_animal?id='.$_GET['animal']
 
                         }
                       echo "</p>";
-                      echo "<form><input style='font-size: 1em;' type='submit' name='valid' value='ok'>";
+                      /* echo "<form><input style='font-size: 1em;' type='submit' name='valid' value='ok'>"; */
                       echo "<form><input style='font-size: 1em;' type='submit' name='modif' value='modifier'>";
                       echo "<input type='hidden' name='animal' value=".$tab1[$i][0].">";
                       echo "<br>";
                       echo "</form>";
+                      
                   }
 
             mysqli_close($link);

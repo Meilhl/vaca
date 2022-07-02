@@ -49,19 +49,19 @@ session_start();
 
         for ($id=0;$id<count($tab_id_demande);$id++){
           echo"<div class='demande'>";
-
+          // Si le statut de la demande est sur valide par l'administrateur
           if ($tab_id_demande[$id][1]==1){
             echo "<form method='GET' action='2A_Mes_demandes.php' name= 'validation_trajet'>";
             Affiche_demande_animaux($link, $tab_id_demande, $id, 1);
-            echo "<input type='submit' name='btn_valid_trajet' value='Validation du transport'>";
+            echo "<input type='submit' name='btn_valid_trajet$id' value='Validation du transport'>";
             echo"</form>";
-            if (isset($_GET["btn_valid_trajet"])){
+            if (isset($_GET["btn_valid_trajet$id"])){
               echo "<form method='GET' action='../../Fonction/modif_bdd_convention.php' target_blank name= modif_bdd_convention> ";
               for ($i=0; $i<$tab_id_demande[$id][2];$i++){
                 echo "<p>Identifiant de l'animal ".$i." : <input type='text' name=animal".$i."></p>";
               }
               $id_profil=$_SESSION["id_profil"];
-              $query_duree="SELECT lib_duree
+              $query_duree="SELECT lib_duree,id_profil
               FROM demande
               LEFT JOIN dureeconvention ON demande.id_duree=dureeconvention.id_duree
               WHERE id_demande=".$tab_id_demande[0][0];
@@ -73,9 +73,23 @@ session_start();
               echo "<input type='hidden' name ='quantite' value='".$tab_id_demande[$id][2]."'>";
               echo "<input type='submit' name='valid' value='validation'>";
               echo"</form>";
+              /*Modification de la valeur d'animal.id_exploit pour l'exploitation d'arrivée
+              d'abord récupération de l'id_exploit du demandeur et l'id_animal */
+              $query_exploit_demande="SELECT id_exploit,id_animal,id_statutDem FROM attributiondesanimaux 
+              JOIN demande ON attributiondesanimaux.id_demande=demande.id_demande
+              JOIN profil ON profil.id_profil=demande.id_profil
+              JOIN attributiondesexploitations ON profil.id_profil=attributiondesexploitations.id_profil 
+              WHERE demande.id_demande='".$tab_id_demande[$i][0]."' ";
+              $result_exploit_demande=mysqli_query($link,$query_exploit_demande);
+              $id_exploit_demande=mysqli_fetch_all($result_exploit_demande);
+              //Puis mise à jour de la base de données pour animal.id_exploit
+              $query_modif_id_exploit="UPDATE animal SET id_exploit='".$id_exploit_demande[0][0]."'
+              WHERE id_exploit='".$id_exploit_demande[0][1]."'";
+              mysqli_query($link,$query_modif_id_exploit);
             }
 
           }
+          // Si le staut de la demande est sur en cours
           elseif ($tab_id_demande[$id][1]==2){
             echo "<form method='GET' action='2A_Mes_demandes.php' name= modif_demande>";
             Affiche_demande_animaux($link, $tab_id_demande, $id, 2);

@@ -19,7 +19,7 @@ if (isset($_GET["valid"]))
     $push=mysqli_query($link,$valid);
 }
 
-/* Récupération des identifiant des observateurs ainsi que leurs nom */
+/* Récupération des informations sur les animaux */
 $query1="SELECT id_animal, id_race, identifiant_animal, surnom, id_sexe, annee_naissance 
 FROM animal
 WHERE en_attente='1'";

@@ -186,7 +186,7 @@ session_start();
           <th><a> Localisation actuelle</a></th> </tr>";
           for ($i=0; $i<$nblig; $i++){
             echo '<td> <input type="checkbox" name="selected[]"
-            value="'.$tab3[$i][0].'"></td>';
+            value="'.$tab3[$i][0].'" ></td>';
             echo "<td>".$tab3[$i][0]."<br></td>";
             echo "<td>".$tab3[$i][1]."<br></td>";
             echo "<td>".$tab3[$i][2]."</td>";
@@ -213,15 +213,23 @@ session_start();
             <h1 class="box-title"></h1>
 
             <label for="duree_conv"> <a>Durée de la convention</a><br> <br></label>
+            <label for='radio1'> <p><b>1 an</b></p> </label>
+            <input type="radio" name="duree" class="radio" id='radio1' value="2" required>
 
-            <input type="radio" name="duree" class="radio" value=2>
+            <label for='radio2'> <p><b>2 an</b></p> </label>
+            <input type="radio" name="duree" class="radio" id='radio2' value="3" required>
+
+            <label for='radio3'> <p><b>Autre</b></p> </label>
+            <input type="radio" name="duree" class="radio" id='radio3' value="4" required>
+
+           <!--  <input type="radio" name="duree" class="radio" value=2>
             <label> 1 an <br> </label>
 
             <input type="radio" name="duree" class="radio" value=3>
             <label> 2 ans <br></label>
 
             <input type="radio" name="duree" class="radio" value=4>
-            <label> Autre durée <br></label>
+            <label> Autre durée <br></label> -->
 
             <!--choix date de fin si duree autre-->
 
@@ -257,8 +265,7 @@ session_start();
             $date_dem= date('Y-m-d');
             $commentaire=$_POST['remarque_demande'];
             $quantite= count($_POST["selected"]);
-            echo $duree ;
-            echo $date_deb;
+            
 
 
             // gestion de la duree
@@ -272,7 +279,7 @@ session_start();
               $date_fin=date('Y-m-d', strtotime('+2 years',strtotime($date_deb)));
             }
 
-            echo $date_fin;
+          
 
             //création de la demande dans la base de donnée
             $query4 = "INSERT INTO `demande`(`id_type_demande`,`id_duree`, `id_statutTran`, `id_statutDem`,
@@ -282,22 +289,22 @@ session_start();
 
                 $result4 = mysqli_query($link,$query4);
 
-                if ($result4){
+                /* if ($result4){
                   echo "<div class='box'>
                   <h3> Ca marche la demande </h3>
                   </div>";
                 }
                 else{
                   echo 'Pas marche la demande ';
-                }
+                } */
 
                 //Récupérartion des id des animaux sélectionnés
                 $query5 = "SELECT LAST_INSERT_ID() FROM demande"; //On recupere l'identifiant de la demande pour l'associer a chaque animal.
                 $result5 =mysqli_query($link,$query5);
                 $tab5 = mysqli_fetch_all($result5);
                 $id_demande = $tab5[0][0];
-                echo $tab5[0][0] ;
-                echo $id_demande;
+                /* echo $tab5[0][0] ;
+                echo $id_demande; */
 
                 //recuperation du tableau afait a partir des données issues des checkbox
                 $id_test=$_POST['selected'];
@@ -307,8 +314,8 @@ session_start();
                 $result5 =mysqli_query($link,$query5);
                 $tab5 = mysqli_fetch_all($result5);
                 $id_demande = $tab5[0][0];
-                echo $tab5[0][0] ;
-                echo $id_demande;
+                /* echo $tab5[0][0] ;
+                echo $id_demande; */
 
                 //recuperation du tableau fait a partir des données issues des checkbox
                 $id_test=$_POST['selected'];
@@ -334,7 +341,7 @@ session_start();
                     </div>";
                   }
                   else{
-                    echo "l'enregistrement a rencontré une erreur";
+                    echo "L'enregistrement a rencontré une erreur";
                   }
                 } //if (isset($_GET["bt_submit3"])==TRUE
               } //isset($_GET["bt_submit2"])==TRUE)
